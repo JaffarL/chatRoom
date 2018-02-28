@@ -191,3 +191,64 @@
 3. 利用`browser-cookie.erase('cookiename')`接口删除浏览器端的cookie缓存
 4. 清除redux数据，`user.redux.js`中实现`logoutSubmit`函数
 5. 退出登录之后重定向至login界面
+
+
+## 高阶组件优化代码
+
+主要两个作用：属性代理和反向继承，这里主要利用其属性代理的功能
+
+1. 属性代理：在外包裹一些属性
+2. 反向继承：修改生命周期，渲染流程(？？？)
+
+### 实现
+
+1. imooc-form文件中实现
+2. 包裹`handleChange()`函数，凡是用此函数包裹着的都会有`handleChange()`函数’
+
+## 聊天页面
+
+### Socket.io基础知识
+
+1. 基于事件的实时双向通信库，基于websocket协议
+2. 前后端通过事件进行双向通信，后端可以主动推送数据
+3. `io.on(),io.emit()`基本上就是观察者模式，和nodejs的`eventlistener`也很像
+
+### 实战应用
+
+1. Card页面每个卡片新增函数跳转到聊天页面
+2. 非路由组件获取history对象一定要包裹`withRoute`组件
+3. 跨域io需手动指定链接地址：`io('ws://localhostZ:9093')`，注意端口协议是ws，即`websocket`
+4. `List,InputItem`实现聊天列表，`Icon`组件在导航栏上实现后退
+5. 根据消息是谁发的来选择消息列表的样式，放左边或者右边
+6. util.js中新增函数定位聊天室的内容
+7. 与不同人的聊天信息需要分组，msg.js
+
+### 数据库模型
+
+1. moogodb中补全chat模型
+2. chatid用户两人的id合并标志唯一聊天室，简化查询
+3. read字段表示这个消息有没有被用户读过
+4. 获取消息列表的同时查找用户信息数据库，将用户的头像和昵称拿出来返回给前端显示
+
+### 消息列表redux实现
+
+1. chat.user.js文件实现
+2. socket.io相关函数全放进redux
+3. unread字段表示有多少条消息未被读取过，用在`NavLinkBar`中的`Badge`显示未读消息数
+4. 过滤不同的消息以修正unread字段，在redux的`getMsgList()`函数的返回函数的入参中增加第二个参数`getState`，`getState()`可以获得redux中所有数据
+
+### 支持emoji表情
+
+1. 利用`Grid`组件显示emoji表情
+2. `Grid`组件配置参考官方文档
+3. 简单的CSS修正emoji的位置到`grid`中间
+4. 手动派发一个事件修正官方的Bug
+
+### 消息分组
+
+1. msg.js
+2. `Object.values(param)`将参数的所有可遍历属性值全拿出来返回一个数组
+3. 显示最后一条聊天信息
+4. 每一个人的右边都显示未读消息数
+5. 对最新的消息排序，`sort()`最新的消息组排在上面
+6. 消息列表名单卡片未读消息修正，底部标签也需要修改，比较麻烦需要去后端修改数据库`readMsg`
